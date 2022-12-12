@@ -10,17 +10,16 @@ int _tmain(int argc, TCHAR* argv[])
 		return 0;
 	}
 
-	CTextReplace replace;
-	replace.push_replace(argv[1]);
-	
-	std::filesystem::path curPath = std::filesystem::current_path();
-	if (false == std::filesystem::exists(curPath))
+	std::filesystem::path cur_path = std::filesystem::current_path();
+	if (false == std::filesystem::exists(cur_path))
 	{
-		std::cout << "not exsists path: " << curPath << std::endl;
+		std::cout << "not exsists path: " << cur_path << std::endl;
 		return 0;
 	}
 
-	for (const auto& entry : std::filesystem::recursive_directory_iterator(curPath))
+	CTextReplace replace;
+
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(cur_path))
 	{
 		if (".go" != entry.path().extension())
 		{
@@ -30,6 +29,12 @@ int _tmain(int argc, TCHAR* argv[])
 		replace.push_file(entry.path(), entry.file_size());
 	}
 
+	if (replace.empty())
+	{
+		return 0;
+	}
+
+	replace.push_replace(argv[1]);
 	replace.run(std::thread::hardware_concurrency());
 
 	return 0;

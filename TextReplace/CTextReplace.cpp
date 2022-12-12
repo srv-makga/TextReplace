@@ -87,17 +87,21 @@ void CTextReplace::parallel_file_replace(file_list_iter start, file_list_iter en
 		return;
 	}
 
-	CTextReplace::file_list_iter newStart = (end - start >= number_thread) ? start + number_thread : end;
+	file_list_iter newStart = (end - start >= number_thread) ? start + number_thread : end;
 
 	auto handle = std::async(&CTextReplace::parallel_file_replace, this, newStart, end, number_thread);
 
-	std::for_each(start, newStart, [&](CTextReplace::file_info& info) {
+	std::for_each(start, newStart, [&](file_info& info) {
 		file_replace(info.first, info.second);
-	});
+		});
 
 	handle.get();
 }
 
+bool CTextReplace::empty() const
+{
+	return m_list.empty();
+}
 
 void CTextReplace::push_replace(const std::tstring& pairs)
 {
@@ -124,7 +128,7 @@ void CTextReplace::push_replace(const std::tstring& pairs)
 
 void CTextReplace::push_file(const std::filesystem::path& path, std::uintmax_t file_size)
 {
-	m_list.push_back({path, file_size });
+	m_list.push_back({ path, file_size });
 }
 
 bool CTextReplace::run(std::size_t thread_count)

@@ -22,8 +22,8 @@ private:
 	bool text_replace(std::tstring& _text);
 	void parallel_file_replace(file_list_iter start, file_list_iter end, std::size_t number_thread);
 
-
 public:
+	bool empty() const;
 	void push_replace(const std::tstring& pairs);
 	void push_file(const std::filesystem::path& path, std::uintmax_t file_size);
 	bool run(std::size_t thread_count);
